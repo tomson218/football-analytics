@@ -12,6 +12,8 @@ from .constants import (
     NUMERIC_COLS,
     MATCH_STATS_COLS,
     ODDS_COLS,
+    ODDS_1X2_COLS,
+    AVG_ODDS_COLS,
     PROB_COLS,
     RAW_MATCHES_COLUMNS,
 )
@@ -27,6 +29,8 @@ __all__ = [
     'NUMERIC_COLS',
     'MATCH_STATS_COLS',
     'ODDS_COLS',
+    'ODDS_1X2_COLS',
+    'AVG_ODDS_COLS',
     'PROB_COLS',
     'RAW_MATCHES_COLUMNS',
 ]

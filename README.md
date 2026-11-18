@@ -1,6 +1,6 @@
 # Football Analytics
 
-Hurtownia danych o meczach piłkarskich z pięciu czołowych lig europejskich, zasilana procesem ETL z surowych plików CSV do bazy MySQL.
+Hurtownia danych o meczach piłkarskich z pięciu czołowych lig europejskich, zasilana procesem ETL z surowych plików CSV do bazy MySQL, wraz z analizą statystyczną załadowanych danych.
 
 ## Zbiór danych
 
@@ -21,6 +21,15 @@ Projekt korzysta ze zbioru **[Club Football Match Data (2000–2025)](https://ww
 | `dim_season` | Sezony |
 | `dim_date` | Kalendarz |
 | `fact_matches` | Wyniki, statystyki, ranking Elo i kursy bukmacherskie |
+
+## Analiza statystyczna
+
+Analiza korzysta z widoku `v_matches_enriched`, który łączy tabelę faktów z wymiarami.
+
+- **Statystyki opisowe** — minimum, maksimum, średnia, odchylenie standardowe, mediana i kwantyle.
+- **Zależności** — korelacja Pearsona wyniku do przerwy z wynikiem końcowym, regresja liniowa strzałów celnych i goli oraz macierz korelacji zapisywana do `correlation_matrix.xlsx`.
+- **Kursy bukmacherskie** — rozkład kursów, prawdopodobieństwo implikowane i marża.
+- **9 wykresów** — liczba drużyn w ligach, kartki, ranking Elo w czasie i według lig, rozkład goli, faule oraz zależność goli od strzałów celnych.
 
 ## Uruchomienie
 
@@ -49,6 +58,16 @@ Wymagane są Python 3.13+ oraz Docker.
 
 Kroki instalacji i ETL można też wykonać skryptem `scripts/sh/run_etl.sh` lub `scripts/bat/run_etl.bat`, uruchomionym z katalogu `backend`.
 
+Analizę statystyczną uruchomisz po zakończeniu ETL, również z katalogu `backend`:
+
+```bash
+python -m statistical_analysis.run_stats
+python -m statistical_analysis.stats.run_odds_stats
+python -m statistical_analysis.visualisation_data
+```
+
+Statystyki opisowe i wykresy można też uruchomić skryptem `scripts/sh/run_stats.sh` lub `scripts/bat/run_stats.bat`.
+
 ## Struktura projektu
 
 ```
@@ -58,8 +77,10 @@ football-analytics/
 │   ├── csv/             # Pliki wejściowe i eksporty CSV
 │   ├── database/
 │   │   ├── etl/         # Proces ETL
-│   │   └── tables/      # Definicje tabel
+│   │   ├── tables/      # Definicje tabel
+│   │   └── views/       # Widoki SQL
 │   ├── scripts/         # Skrypty uruchomieniowe
+│   ├── statistical_analysis/  # Statystyki i wykresy
 │   └── requirements.txt
 ├── docker-compose.yaml
 └── README.md

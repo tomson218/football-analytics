@@ -1,5 +1,5 @@
 """
-common/constants.py — Central repository for ETL constants.
+common/constants.py — Central repository for ETL and statistical analysis constants.
 """
 
 # Top leagues to filter
@@ -16,6 +16,15 @@ DIVISION_TO_COUNTRY = {
     'D1': 'GER',
     'F1': 'FRA',
     'N1': 'NED'
+}
+
+# League display names
+LEAGUE_NAMES = {
+    'I1': 'Serie A',
+    'SP1': 'La Liga',
+    'D1': 'Bundesliga',
+    'F1': 'Ligue 1',
+    'N1': 'Eredivisie'
 }
 
 # Batch insert size
@@ -57,6 +66,12 @@ ODDS_COLS = [
     'Over25', 'Under25', 'MaxOver25', 'MaxUnder25'
 ]
 
+# Average and maximum 1X2 odds columns (used for odds distribution)
+ODDS_1X2_COLS = ['OddHome', 'OddDraw', 'OddAway', 'MaxHome', 'MaxDraw', 'MaxAway']
+
+# Average odds columns (3 — used for implied probability)
+AVG_ODDS_COLS = ['OddHome', 'OddDraw', 'OddAway']
+
 # Probability columns
 PROB_COLS = ['C_LTH', 'C_LTA', 'C_VHD', 'C_VAD', 'C_HTB', 'C_PHB']
 
@@ -74,3 +89,16 @@ RAW_MATCHES_COLUMNS = [
     'HandiSize', 'HandiHome', 'HandiAway',
     'C_LTH', 'C_LTA', 'C_VHD', 'C_VAD', 'C_HTB', 'C_PHB'
 ]
+
+# ---------------------------------------------------------------------------
+# Data loader column groups (used by statistical_analysis data_loaders)
+# ---------------------------------------------------------------------------
+
+# All numeric columns from v_matches_enriched view
+ENRICHED_NUMERIC_COLS = NUMERIC_COLS
+
+# Form columns that should be cast to int
+ENRICHED_FORM_INT_COLS = ['Form3Home', 'Form3Away', 'Form5Home', 'Form5Away']
+
+# Match statistics columns that should be cast to int
+ENRICHED_MATCH_STATS_COLS = ['FTHome', 'FTAway', 'HTHome', 'HTAway'] + MATCH_STATS_COLS

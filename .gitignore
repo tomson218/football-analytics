@@ -34,3 +34,8 @@ backend/csv/raw/*.csv
 
 # Logs
 *.log
+
+# Generated reports
+*.xlsx
+*.png
+*.pdf
