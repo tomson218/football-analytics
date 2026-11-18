@@ -1,0 +1,25 @@
+services:
+    db:
+        image: mysql:9.7.4
+        restart: always
+        command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+        environment:
+            MYSQL_ROOT_PASSWORD: ${YOUR_PASSWORD}
+            MYSQL_DATABASE: ${YOUR_DB_NAME}
+        ports:
+            - '127.0.0.1:3307:3306'
+        volumes:
+            - mysql_data:/var/lib/mysql
+        deploy:
+            resources:
+                limits:
+                    memory: 0.5g
+        healthcheck:
+            test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-uroot', '-p${YOUR_PASSWORD}']
+            interval: 10s
+            timeout: 5s
+            retries: 10
+            start_period: 60s
+
+volumes:
+    mysql_data:
