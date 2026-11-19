@@ -16,8 +16,8 @@ CREATE TABLE IF NOT EXISTS dim_date (
     day_of_week        INT          NOT NULL,              -- 0=Mon, 6=Sun
     day_name           VARCHAR(20)  NOT NULL,
     month_name         VARCHAR(20)  NOT NULL,
-    season_name        VARCHAR(10),                        -- np. '2020/21'
-    is_weekend         TINYINT(1)   NOT NULL,              -- 1 = sob/niedz
-    is_weekday         TINYINT(1)   NOT NULL               -- 1 = pon-pt
+    season_name        VARCHAR(10),                        -- e.g. '2020/21'
+    is_weekend         TINYINT(1)   NOT NULL,              -- 1 = Sat/Sun
+    is_weekday         TINYINT(1)   NOT NULL               -- 1 = Mon-Fri
 ) ENGINE=InnoDB;
 """

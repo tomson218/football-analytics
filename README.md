@@ -5,60 +5,60 @@
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-Hurtownia danych o meczach piłkarskich z pięciu czołowych lig europejskich, zasilana procesem ETL z surowych plików CSV do bazy MySQL, wraz z analizą statystyczną załadowanych danych.
+A data warehouse of football matches from five top European leagues, fed by an ETL pipeline from raw CSV files into a MySQL database, together with a statistical analysis of the loaded data.
 
-## Podgląd
+## Preview
 
-Wykresy wygenerowane z danych w hurtowni (8 621 meczów z sezonów 2020/21–2024/25).
+Charts generated from the data in the warehouse (8,621 matches from the 2020/21–2024/25 seasons).
 
-![Ranking Elo w czasie dla czołowych drużyn](docs/images/elo_time_series.png)
+![Elo rating over time for top teams](docs/images/elo_time_series.png)
 
-| Rozkład rankingu Elo według lig | Strzały celne a gole |
+| Elo rating distribution by league | Shots on target vs goals |
 |---|---|
-| ![Rozkład rankingu Elo według lig](docs/images/elo_by_league.png) | ![Regresja: strzały celne a gole](docs/images/shots_vs_goals.png) |
+| ![Elo rating distribution by league](docs/images/elo_by_league.png) | ![Regression: shots on target vs goals](docs/images/shots_vs_goals.png) |
 
-## Zbiór danych
+## Dataset
 
-Projekt korzysta ze zbioru **[Club Football Match Data (2000–2025)](https://www.kaggle.com/datasets/adamgbor/club-football-match-data-2000-2025)** autorstwa Adama Gábora (licencja MIT). Do hurtowni trafiają mecze z lig I1 (Serie A), SP1 (La Liga), D1 (Bundesliga), F1 (Ligue 1) i N1 (Eredivisie) rozegrane od 1 sierpnia 2020 do 30 czerwca 2025.
+The project uses the **[Club Football Match Data (2000–2025)](https://www.kaggle.com/datasets/adamgbor/club-football-match-data-2000-2025)** dataset by Adam Gábor (MIT license). The warehouse holds matches from the I1 (Serie A), SP1 (La Liga), D1 (Bundesliga), F1 (Ligue 1) and N1 (Eredivisie) leagues played between 1 August 2020 and 30 June 2025.
 
-## Proces ETL
+## ETL pipeline
 
-1. **Extract** — wczytanie plików CSV do tabel `raw_eloRatings` i `raw_Matches`.
-2. **Clean** — konwersja typów i uzupełnienie brakujących lub błędnych wartości.
-3. **Load** — załadowanie 5 tabel wymiarów i tabeli faktów `fact_matches` w schemacie gwiazdy.
-4. **Export** — zapis danych surowych do `backend/csv/raw/` i wymiarów do `backend/csv/clean/`.
+1. **Extract** — loads the CSV files into the `raw_eloRatings` and `raw_Matches` tables.
+2. **Clean** — converts types and fills in missing or invalid values.
+3. **Load** — loads 5 dimension tables and the `fact_matches` fact table in a star schema.
+4. **Export** — saves the raw data to `backend/csv/raw/` and the dimensions to `backend/csv/clean/`.
 
-| Tabela | Zawartość |
+| Table | Contents |
 |---|---|
-| `dim_country` | Kraje |
-| `dim_division` | Ligi |
-| `dim_team` | Drużyny i ich aktualny ranking Elo |
-| `dim_season` | Sezony |
-| `dim_date` | Kalendarz |
-| `fact_matches` | Wyniki, statystyki, ranking Elo i kursy bukmacherskie |
+| `dim_country` | Countries |
+| `dim_division` | Leagues |
+| `dim_team` | Teams and their current Elo rating |
+| `dim_season` | Seasons |
+| `dim_date` | Calendar |
+| `fact_matches` | Results, match statistics, Elo ratings and bookmaker odds |
 
-## Analiza statystyczna
+## Statistical analysis
 
-Analiza korzysta z widoku `v_matches_enriched`, który łączy tabelę faktów z wymiarami.
+The analysis reads from the `v_matches_enriched` view, which joins the fact table with its dimensions.
 
-- **Statystyki opisowe** — minimum, maksimum, średnia, odchylenie standardowe, mediana i kwantyle.
-- **Zależności** — korelacja Pearsona wyniku do przerwy z wynikiem końcowym, regresja liniowa strzałów celnych i goli oraz macierz korelacji zapisywana do `correlation_matrix.xlsx`.
-- **Kursy bukmacherskie** — rozkład kursów, prawdopodobieństwo implikowane i marża.
-- **9 wykresów** — liczba drużyn w ligach, kartki, ranking Elo w czasie i według lig, rozkład goli, faule oraz zależność goli od strzałów celnych.
+- **Descriptive statistics** — minimum, maximum, mean, standard deviation, median and quantiles.
+- **Relationships** — Pearson correlation between the half-time and full-time result, linear regression of shots on target and goals, and a correlation matrix saved to `correlation_matrix.xlsx`.
+- **Bookmaker odds** — odds distribution, implied probability and bookmaker margin.
+- **9 charts** — number of teams per league, cards, Elo rating over time and by league, goal distributions, fouls, and goals versus shots on target.
 
-## Wymagania
+## Requirements
 
-- Python 3.13 lub nowszy
-- Docker z Docker Compose (baza MySQL)
-- Pliki zbioru danych zapisane jako:
-  - `backend/csv/raw/raw_Matches.csv` — mecze; kolumny jak w tabeli `raw_Matches` (`backend/database/tables/raw/raw_matches.py`), łącznie z pierwszą kolumną `id`,
-  - `backend/csv/raw/raw_eloRatings.csv` — rankingi Elo z kolumnami `date`, `club`, `country`, `elo`.
+- Python 3.13 or newer
+- Docker with Docker Compose (for the MySQL database)
+- The dataset files saved as:
+  - `backend/csv/raw/raw_Matches.csv` — matches; columns as in the `raw_Matches` table (`backend/database/tables/raw/raw_matches.py`), including the leading `id` column,
+  - `backend/csv/raw/raw_eloRatings.csv` — Elo ratings with the `date`, `club`, `country` and `elo` columns.
 
-## Uruchomienie
+## Getting started
 
-### 1. Konfiguracja
+### 1. Configuration
 
-Sklonuj repozytorium i utwórz plik `.env` w jego głównym katalogu:
+Clone the repository and create a `.env` file in its root directory:
 
 ```bash
 git clone https://github.com/tomson218/football-analytics.git
@@ -69,20 +69,20 @@ cd football-analytics
 YOUR_HOST=127.0.0.1
 YOUR_PORT=3307
 YOUR_USER=root
-YOUR_PASSWORD=twoje_haslo
+YOUR_PASSWORD=your_password
 YOUR_DB_NAME=football_dw
 ```
 
-### 2. Baza danych
+### 2. Database
 
 ```bash
 docker compose up -d
-docker compose ps    # poczekaj, aż usługa db będzie miała status "healthy"
+docker compose ps    # wait until the db service is "healthy"
 ```
 
-MySQL jest dostępny pod adresem `127.0.0.1:3307`.
+MySQL is available at `127.0.0.1:3307`.
 
-### 3. Środowisko Pythona
+### 3. Python environment
 
 ```bash
 cd backend
@@ -91,43 +91,43 @@ source venv/bin/activate      # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 4. Hurtownia danych i ETL
+### 4. Data warehouse and ETL
 
 ```bash
-python database/main_dw_db.py           # schemat: tabele i widok
-python database/etl/etl_raw_to_dw.py    # ETL: CSV -> hurtownia
+python database/main_dw_db.py           # schema: tables and view
+python database/etl/etl_raw_to_dw.py    # ETL: CSV -> warehouse
 ```
 
-### 5. Analiza statystyczna
+### 5. Statistical analysis
 
 ```bash
-python -m statistical_analysis.run_stats              # statystyki opisowe i macierz korelacji
-python -m statistical_analysis.stats.run_odds_stats   # analiza kursów
-python -m statistical_analysis.visualisation_data     # 9 wykresów
+python -m statistical_analysis.run_stats              # descriptive statistics and correlation matrix
+python -m statistical_analysis.stats.run_odds_stats   # odds analysis
+python -m statistical_analysis.visualisation_data     # 9 charts
 ```
 
-Kroki 3–5 można też wykonać skryptami z katalogu `backend`: `scripts/sh/run_etl.sh` i `scripts/sh/run_stats.sh` (Linux/macOS) lub `scripts\bat\run_etl.bat` i `scripts\bat\run_stats.bat` (Windows).
+Steps 3–5 can also be run with the scripts in the `backend` directory: `scripts/sh/run_etl.sh` and `scripts/sh/run_stats.sh` (Linux/macOS) or `scripts\bat\run_etl.bat` and `scripts\bat\run_stats.bat` (Windows).
 
-## Struktura projektu
+## Project structure
 
 ```
 football-analytics/
 ├── backend/
-│   ├── common/                  # Stałe konfiguracyjne
-│   ├── csv/                     # Pliki wejściowe i eksporty CSV
+│   ├── common/                  # Configuration constants
+│   ├── csv/                     # Input files and CSV exports
 │   ├── database/
-│   │   ├── etl/                 # Proces ETL
-│   │   ├── tables/              # Definicje tabel
-│   │   └── views/               # Widoki SQL
-│   ├── scripts/                 # Skrypty uruchomieniowe
-│   ├── statistical_analysis/    # Statystyki i wykresy
+│   │   ├── etl/                 # ETL pipeline
+│   │   ├── tables/              # Table definitions
+│   │   └── views/               # SQL views
+│   ├── scripts/                 # Run scripts
+│   ├── statistical_analysis/    # Statistics and charts
 │   └── requirements.txt
-├── docs/images/                 # Zrzuty wykresów do README
+├── docs/images/                 # Chart screenshots for the README
 ├── docker-compose.yaml
 ├── LICENSE
 └── README.md
 ```
 
-## Licencja
+## License
 
-Kod jest udostępniony na licencji [MIT](LICENSE). Zbiór danych [Club Football Match Data (2000–2025)](https://www.kaggle.com/datasets/adamgbor/club-football-match-data-2000-2025) jest dziełem Adama Gábora i również jest udostępniany na licencji MIT.
+The code is released under the [MIT](LICENSE) license. The [Club Football Match Data (2000–2025)](https://www.kaggle.com/datasets/adamgbor/club-football-match-data-2000-2025) dataset is the work of Adam Gábor and is also released under the MIT license.

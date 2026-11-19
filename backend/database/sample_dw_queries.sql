@@ -1,14 +1,14 @@
 -- =============================================================================
--- sample_dw_queries.sql — Przykładowe zapytania analityczne na hurtowni danych
+-- sample_dw_queries.sql — Sample analytical queries on the data warehouse
 -- =============================================================================
--- Plik pokazuje korzyści z modelu gwiazdy (Star Schema) w porównaniu do OLTP.
--- Uruchom na bazie: football_dw
+-- Shows the benefits of the star schema compared to an OLTP model.
+-- Run on database: football_dw
 -- =============================================================================
 
 -- =============================================================================
--- 1. Liczba meczów i średnia goli na sezon
+-- 1. Number of matches and average goals per season
 -- =============================================================================
--- HURTOWNIA (proste, 1 tabela faktów + 1 wymiar):
+-- WAREHOUSE (simple: 1 fact table + 1 dimension):
 SELECT
     s.season_name,
     COUNT(*)                          AS matches_count,
@@ -19,9 +19,9 @@ GROUP BY s.season_name
 ORDER BY s.season_name;
 
 -- =============================================================================
--- 2. Statystyki drużyny w danym sezonie (mecze, wygrane, remisy, przegrane, gole)
+-- 2. Team statistics in a given season (matches, wins, draws, losses, goals)
 -- =============================================================================
--- HURTOWNIA (denormalizowany wymiar drużyny — bez JOIN z krajem):
+-- WAREHOUSE (denormalized team dimension — no JOIN with country):
 SELECT
     t.name                            AS team,
     s.season_name,
@@ -43,9 +43,9 @@ WHERE t.name = 'Manchester City'
 GROUP BY t.name, s.season_name;
 
 -- =============================================================================
--- 3. Średnie kursy bukmacherskie na ligę (1X2)
+-- 3. Average bookmaker odds per league (1X2)
 -- =============================================================================
--- HURTOWNIA (wymiar ligi z denormalizowanym krajem):
+-- WAREHOUSE (league dimension with denormalized country):
 SELECT
     d.name                            AS division,
     d.country_name,
@@ -59,9 +59,9 @@ GROUP BY d.name, d.country_name
 ORDER BY matches DESC;
 
 -- =============================================================================
--- 4. Analiza wyników w zależności od dnia tygodnia
+-- 4. Results by day of the week
 -- =============================================================================
--- HURTOWNIA (wymiar daty z gotowymi atrybutami):
+-- WAREHOUSE (date dimension with ready-made attributes):
 SELECT
     dd.day_name,
     COUNT(*)                          AS matches,
@@ -76,16 +76,16 @@ GROUP BY dd.day_name, dd.day_of_week
 ORDER BY dd.day_of_week;
 
 -- =============================================================================
--- 5. Porównanie Elo vs wynik meczu (czy faworyci wygrywają?)
+-- 5. Elo vs match result (do favourites win?)
 -- =============================================================================
--- HURTOWNIA (Elo jako miara w tabeli faktów):
+-- WAREHOUSE (Elo as a measure in the fact table):
 SELECT
     CASE
-        WHEN f.home_elo > f.away_elo + 20 THEN 'Duży faworyt (dom)'
-        WHEN f.home_elo > f.away_elo THEN 'Lekki faworyt (dom)'
-        WHEN f.away_elo > f.home_elo + 20 THEN 'Duży faworyt (gość)'
-        WHEN f.away_elo > f.home_elo THEN 'Lekki faworyt (gość)'
-        ELSE 'Równe szanse'
+        WHEN f.home_elo > f.away_elo + 20 THEN 'Strong favourite (home)'
+        WHEN f.home_elo > f.away_elo THEN 'Slight favourite (home)'
+        WHEN f.away_elo > f.home_elo + 20 THEN 'Strong favourite (away)'
+        WHEN f.away_elo > f.home_elo THEN 'Slight favourite (away)'
+        ELSE 'Even'
     END AS elo_category,
     COUNT(*)                          AS matches,
     SUM(CASE WHEN f.ft_result = 'H' THEN 1 ELSE 0 END) AS home_wins,
@@ -103,9 +103,9 @@ GROUP BY elo_category
 ORDER BY matches DESC;
 
 -- =============================================================================
--- 6. Weekend vs weekday — czy są inne kursy?
+-- 6. Weekend vs weekday — are the odds different?
 -- =============================================================================
--- HURTOWNIA (gotowe flagi is_weekend / is_weekday w dim_date):
+-- WAREHOUSE (ready-made is_weekend / is_weekday flags in dim_date):
 SELECT
     CASE WHEN dd.is_weekend = 1 THEN 'Weekend' ELSE 'Weekday' END AS period,
     COUNT(*)                          AS matches,
@@ -119,9 +119,9 @@ GROUP BY dd.is_weekend
 ORDER BY period;
 
 -- =============================================================================
--- 7. Top 10 drużyn pod względem strzelonych goli (wszystkie sezony)
+-- 7. Top 10 teams by goals scored (all seasons)
 -- =============================================================================
--- HURTOWNIA (denormalizowany wymiar — nazwa kraju w dim_team):
+-- WAREHOUSE (denormalized dimension — country name in dim_team):
 SELECT
     t.name                            AS team,
     t.country_name,
@@ -136,9 +136,9 @@ ORDER BY total_goals_scored DESC
 LIMIT 10;
 
 -- =============================================================================
--- 8. Agregacja kwartalna — gole i strzały na kwartał
+-- 8. Quarterly aggregation — goals and shots per quarter
 -- =============================================================================
--- HURTOWNIA (gotowe pole quarter w dim_date):
+-- WAREHOUSE (ready-made quarter field in dim_date):
 SELECT
     dd.year,
     dd.quarter,
@@ -152,9 +152,9 @@ GROUP BY dd.year, dd.quarter
 ORDER BY dd.year, dd.quarter;
 
 -- =============================================================================
--- 9. Analiza Over/Under 2.5 — skuteczność kursów
+-- 9. Over/Under 2.5 — how accurate are the odds
 -- =============================================================================
--- HURTOWNIA (kursy i wyniki w jednej tabeli faktów):
+-- WAREHOUSE (odds and results in a single fact table):
 SELECT
     d.division_code,
     COUNT(*)                          AS matches,
@@ -168,9 +168,9 @@ GROUP BY d.division_code
 ORDER BY over_25_pct DESC;
 
 -- =============================================================================
--- 10. Sezon + liga — pełna tabela statystyk
+-- 10. Season + league — full statistics table
 -- =============================================================================
--- HURTOWNIA (klasyczne zapytanie OLAP — slice & dice):
+-- WAREHOUSE (classic OLAP query — slice & dice):
 SELECT
     s.season_name,
     d.division_code,

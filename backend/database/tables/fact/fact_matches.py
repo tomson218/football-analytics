@@ -14,17 +14,17 @@ CREATE TABLE IF NOT EXISTS fact_matches (
     division_key       INT NOT NULL,
     season_key         INT NOT NULL,
 
-    -- Miary: Elo
+    -- Measures: Elo
     home_elo           DECIMAL(6, 2),
     away_elo           DECIMAL(6, 2),
 
-    -- Miary: Forma
+    -- Measures: Form
     form3_home         INT,
     form5_home         INT,
     form3_away         INT,
     form5_away         INT,
 
-    -- Miary: Wyniki (gole)
+    -- Measures: Results (goals)
     ft_home_goals      INT,
     ft_away_goals      INT,
     ft_result          CHAR(1),                          -- H / D / A
@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS fact_matches (
     ht_away_goals      INT,
     ht_result          CHAR(1),                          -- H / D / A
 
-    -- Miary: Statystyki meczowe
+    -- Measures: Match statistics
     home_shots         INT,
     away_shots         INT,
     home_target        INT,
@@ -46,7 +46,7 @@ CREATE TABLE IF NOT EXISTS fact_matches (
     home_red           INT,
     away_red           INT,
 
-    -- Miary: Kursy (1X2)
+    -- Measures: Odds (1X2)
     odd_home           DECIMAL(5, 2),
     odd_draw           DECIMAL(5, 2),
     odd_away           DECIMAL(5, 2),
