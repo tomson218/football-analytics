@@ -39,3 +39,4 @@ backend/csv/raw/*.csv
 *.xlsx
 *.png
 *.pdf
+!docs/images/*.png
