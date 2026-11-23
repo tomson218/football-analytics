@@ -1,6 +1,39 @@
 """
-common/constants.py — Central repository for ETL and statistical analysis constants.
+common/constants.py — Central repository for ETL, ML and statistical analysis constants.
 """
+
+# ---------------------------------------------------------------------------
+# ML feature columns (CatBoost HomeNoLose models)
+# ---------------------------------------------------------------------------
+
+# All 25 numerical features from matches_cleaned.csv (base model)
+FEATURE_COLS_BASE = [
+    'C_LTA', 'HomeElo', 'AwayElo',
+    'Form3Home', 'Form5Home', 'Form3Away', 'Form5Away',
+    'OddDraw', 'OddAway', 'OddHome',
+    'MaxHome', 'MaxDraw', 'MaxAway',
+    'Over25', 'Under25', 'MaxOver25', 'MaxUnder25',
+    'HandiSize', 'HandiHome', 'HandiAway',
+    'C_LTH', 'C_VHD', 'C_VAD', 'C_PHB', 'C_HTB'
+]
+
+# 10-feature model (top features by importance from base model)
+FEATURE_COLS_10 = [
+    'OddHome', 'MaxAway', 'MaxHome',
+    'OddAway', 'OddDraw', 'MaxDraw',
+    'HandiSize', 'HandiHome',
+    'C_HTB', 'C_LTA'
+]
+
+# 6-feature model (top 6 features by importance from base model)
+FEATURE_COLS_6 = [
+    'OddHome', 'OddAway', 'MaxAway',
+    'HandiSize', 'MaxHome', 'MaxDraw'
+]
+
+# ---------------------------------------------------------------------------
+# ETL configuration
+# ---------------------------------------------------------------------------
 
 # Top leagues to filter
 TOP_LEAGUES = ['I1', 'SP1', 'D1', 'F1', 'N1']
@@ -32,6 +65,7 @@ BATCH_SIZE = 1000
 
 # Day and month names (for dim_date)
 DAY_NAMES = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
 MONTH_NAMES = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'

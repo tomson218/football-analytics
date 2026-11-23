@@ -6,7 +6,9 @@ so they must be executed after TABLES.
 """
 
 from views.v_matches_enriched import SQL as v_matches_enriched_sql
+from views.v_matches_ml import SQL as v_matches_ml_sql
 
 VIEWS = [
     v_matches_enriched_sql,
+    v_matches_ml_sql,
 ]
