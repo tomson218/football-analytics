@@ -1,0 +1,219 @@
+{
+  "comparison": [
+    {
+      "model_name": "Base (25 features)",
+      "features_count": 25,
+      "features": [
+        "C_LTA",
+        "HomeElo",
+        "AwayElo",
+        "Form3Home",
+        "Form5Home",
+        "Form3Away",
+        "Form5Away",
+        "OddDraw",
+        "OddAway",
+        "OddHome",
+        "MaxHome",
+        "MaxDraw",
+        "MaxAway",
+        "Over25",
+        "Under25",
+        "MaxOver25",
+        "MaxUnder25",
+        "HandiSize",
+        "HandiHome",
+        "HandiAway",
+        "C_LTH",
+        "C_VHD",
+        "C_VAD",
+        "C_PHB",
+        "C_HTB"
+      ],
+      "best_params": {
+        "border_count": 128,
+        "depth": 6,
+        "learning_rate": 0.05,
+        "l2_leaf_reg": 1,
+        "iterations": 300
+      },
+      "cv_auc_mean": 0.7401941107369656,
+      "cv_auc_std": 0.01859761249469219,
+      "training_time_sec": 3.0684452056884766,
+      "validation_metrics": {
+        "AUC": 0.7386964107676969,
+        "Accuracy": 0.7262180974477959,
+        "Precision": 0.7587719298245614,
+        "Recall": 0.8796610169491526,
+        "Logloss": 0.5450988061804658
+      },
+      "test_metrics": {
+        "AUC": 0.716277246939385,
+        "Accuracy": 0.7149478563151797,
+        "F1": 0.8066037735849056,
+        "Logloss": 0.5658899064080556
+      },
+      "feature_importance": {
+        "C_LTA": 2.03789637371577,
+        "HomeElo": 1.7576026719861184,
+        "AwayElo": 1.5642062346591097,
+        "Form3Home": 1.9223087051171734,
+        "Form5Home": 1.0091794416130129,
+        "Form3Away": 1.2462149932384472,
+        "Form5Away": 0.7672329315597961,
+        "OddDraw": 8.522226839379814,
+        "OddAway": 8.886096842911504,
+        "OddHome": 16.67634255664787,
+        "MaxHome": 12.110529336262006,
+        "MaxDraw": 7.106528833538474,
+        "MaxAway": 16.585081374052443,
+        "Over25": 0.5661473577686843,
+        "Under25": 1.6157766245895897,
+        "MaxOver25": 1.9495857796104712,
+        "MaxUnder25": 1.0665780973520211,
+        "HandiSize": 3.8662221163700115,
+        "HandiHome": 2.3280438978813303,
+        "HandiAway": 1.463452983261193,
+        "C_LTH": 1.6851438371896768,
+        "C_VHD": 0.3402483965112131,
+        "C_VAD": 1.28526001363849,
+        "C_PHB": 1.5434795922647546,
+        "C_HTB": 2.0986141688810047
+      }
+    },
+    {
+      "model_name": "10-Feature (top 10)",
+      "features_count": 10,
+      "features": [
+        "OddHome",
+        "MaxAway",
+        "MaxHome",
+        "OddAway",
+        "OddDraw",
+        "MaxDraw",
+        "HandiSize",
+        "HandiHome",
+        "C_HTB",
+        "C_LTA"
+      ],
+      "best_params": {
+        "border_count": 64,
+        "depth": 6,
+        "learning_rate": 0.1,
+        "l2_leaf_reg": 1,
+        "iterations": 100
+      },
+      "cv_auc_mean": 0.7393627495991935,
+      "cv_auc_std": 0.019551833204861698,
+      "training_time_sec": 0.4124903678894043,
+      "validation_metrics": {
+        "AUC": 0.7467036390827517,
+        "Accuracy": 0.7320185614849188,
+        "Precision": 0.7635829662261381,
+        "Recall": 0.8813559322033898,
+        "Logloss": 0.5375704541829089
+      },
+      "test_metrics": {
+        "AUC": 0.7157609236588036,
+        "Accuracy": 0.709154113557358,
+        "F1": 0.8018942383583267,
+        "Logloss": 0.5685976040115109
+      },
+      "feature_importance": {
+        "OddHome": 27.50297338758299,
+        "MaxAway": 14.497701262496099,
+        "MaxHome": 10.596654193759429,
+        "OddAway": 20.8801048614895,
+        "OddDraw": 3.7454865177457073,
+        "MaxDraw": 5.4100294837859995,
+        "HandiSize": 12.34544268842673,
+        "HandiHome": 1.7567843448263263,
+        "C_HTB": 0.6471270064925381,
+        "C_LTA": 2.6176962533946715
+      }
+    },
+    {
+      "model_name": "6-Feature (top 6)",
+      "features_count": 6,
+      "features": [
+        "OddHome",
+        "OddAway",
+        "MaxAway",
+        "HandiSize",
+        "MaxHome",
+        "MaxDraw"
+      ],
+      "best_params": {
+        "border_count": 64,
+        "depth": 4,
+        "learning_rate": 0.1,
+        "l2_leaf_reg": 3,
+        "iterations": 100
+      },
+      "cv_auc_mean": 0.7414107325419083,
+      "cv_auc_std": 0.019445567509403537,
+      "training_time_sec": 0.38439488410949707,
+      "validation_metrics": {
+        "AUC": 0.7508848454636091,
+        "Accuracy": 0.728538283062645,
+        "Precision": 0.7602339181286549,
+        "Recall": 0.8813559322033898,
+        "Logloss": 0.5353071260457877
+      },
+      "test_metrics": {
+        "AUC": 0.7158293520453867,
+        "Accuracy": 0.7114716106604867,
+        "F1": 0.8037825059101655,
+        "Logloss": 0.5645158495153113
+      },
+      "feature_importance": {
+        "OddHome": 25.514050571587326,
+        "OddAway": 9.370489325546622,
+        "MaxAway": 27.555991701231108,
+        "HandiSize": 7.827969528681184,
+        "MaxHome": 11.696642080890383,
+        "MaxDraw": 18.03485679206338
+      }
+    }
+  ],
+  "summary": {
+    "base_model": {
+      "features_count": 25,
+      "test_auc": 0.716277246939385,
+      "test_accuracy": 0.7149478563151797,
+      "test_f1": 0.8066037735849056
+    },
+    "ten_feature_model": {
+      "features_count": 10,
+      "features": [
+        "OddHome",
+        "MaxAway",
+        "MaxHome",
+        "OddAway",
+        "OddDraw",
+        "MaxDraw",
+        "HandiSize",
+        "HandiHome",
+        "C_HTB",
+        "C_LTA"
+      ],
+      "test_auc": 0.7157609236588036,
+      "test_accuracy": 0.709154113557358,
+      "test_f1": 0.8018942383583267
+    },
+    "six_feature_model": {
+      "features_count": 6,
+      "features": [
+        "OddHome",
+        "OddAway",
+        "MaxAway",
+        "HandiSize",
+        "MaxHome",
+        "MaxDraw"
+      ],
+      "test_auc": 0.7158293520453867,
+      "test_accuracy": 0.7114716106604867,
+      "test_f1": 0.8037825059101655
+    }
+  }
+}
