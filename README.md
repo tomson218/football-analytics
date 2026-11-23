@@ -5,7 +5,7 @@
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-A data warehouse of football matches from five top European leagues, fed by an ETL pipeline from raw CSV files into a MySQL database, together with a statistical analysis of the loaded data.
+A data warehouse of football matches from five top European leagues, fed by an ETL pipeline from raw CSV files into a MySQL database, together with a statistical analysis of the loaded data and CatBoost models that predict whether the home team avoids defeat.
 
 ## Preview
 
@@ -45,6 +45,23 @@ The analysis reads from the `v_matches_enriched` view, which joins the fact tabl
 - **Relationships** — Pearson correlation between the half-time and full-time result, linear regression of shots on target and goals, and a correlation matrix saved to `correlation_matrix.xlsx`.
 - **Bookmaker odds** — odds distribution, implied probability and bookmaker margin.
 - **9 charts** — number of teams per league, cards, Elo rating over time and by league, goal distributions, fouls, and goals versus shots on target.
+
+## Machine learning models
+
+Three CatBoost classifiers predict **HomeNoLose**: whether the home team does not lose (home win or draw = 1, away win = 0). The pipeline reads from the `v_matches_ml` view.
+
+| Model | File | Features | CV AUC | Test AUC | Test accuracy | Test F1 |
+|---|---|---|---|---|---|---|
+| Base | `catboost_base.cbm` | 25: all numerical features (Elo, form, 1X2 and over/under odds, Asian Handicap and the dataset's `C_*` indicators) | 0.740 | 0.716 | 0.715 | 0.807 |
+| 10-feature | `catboost_10feat.cbm` | 10 most important features of the base model | 0.739 | 0.716 | 0.709 | 0.802 |
+| 6-feature | `catboost_6feat.cbm` | `OddHome`, `OddAway`, `MaxAway`, `HandiSize`, `MaxHome`, `MaxDraw` | 0.741 | 0.716 | 0.712 | 0.804 |
+
+- **Data split**: 80% train, 10% validation, 10% test, stratified by the target (`random_state=42`).
+- **Training**: grid search over `iterations` (100, 300, 500), `depth` (4–6) and `learning_rate` (0.03, 0.05, 0.1) with 5-fold cross-validation, optimising AUC.
+- **Feature selection**: the 10- and 6-feature sets are the top features by importance in the base model. Dropping 19 features barely changes the scores, so the 6-feature model needs only bookmaker odds and the handicap.
+- **Outputs**: models are saved in `backend/ml_exploratory_analysis/models/`. Metrics, best hyperparameters and feature importance charts go to `backend/ml_exploratory_analysis/results/`.
+
+The feature lists are defined in `backend/common/constants.py` (`FEATURE_COLS_BASE`, `FEATURE_COLS_10`, `FEATURE_COLS_6`).
 
 ## Requirements
 
@@ -94,7 +111,7 @@ pip install -r requirements.txt
 ### 4. Data warehouse and ETL
 
 ```bash
-python database/main_dw_db.py           # schema: tables and view
+python database/main_dw_db.py           # schema: tables and views
 python database/etl/etl_raw_to_dw.py    # ETL: CSV -> warehouse
 ```
 
@@ -106,7 +123,18 @@ python -m statistical_analysis.stats.run_odds_stats   # odds analysis
 python -m statistical_analysis.visualisation_data     # 9 charts
 ```
 
-Steps 3–5 can also be run with the scripts in the `backend` directory: `scripts/sh/run_etl.sh` and `scripts/sh/run_stats.sh` (Linux/macOS) or `scripts\bat\run_etl.bat` and `scripts\bat\run_stats.bat` (Windows).
+### 6. Machine learning models
+
+```bash
+python ml_exploratory_analysis/prepare_data.py      # export v_matches_ml to data/matches_cleaned.csv
+python ml_exploratory_analysis/data_processing.py   # build the HomeNoLose target
+python ml_exploratory_analysis/train_models.py      # train and save the 3 models
+python ml_exploratory_analysis/testing.py           # evaluate the base model on the test set
+```
+
+Training runs a grid search for each model, so it takes a few minutes. `testing.py` also saves a confusion matrix and sample predictions to `results/`.
+
+Steps 3–6 can also be run with the scripts in the `backend` directory: `scripts/sh/run_etl.sh`, `scripts/sh/run_stats.sh` and `scripts/sh/run_ml.sh` (Linux/macOS) or `scripts\bat\run_etl.bat`, `scripts\bat\run_stats.bat` and `scripts\bat\run_ml.bat` (Windows).
 
 ## Project structure
 
@@ -119,6 +147,9 @@ football-analytics/
 │   │   ├── etl/                 # ETL pipeline
 │   │   ├── tables/              # Table definitions
 │   │   └── views/               # SQL views
+│   ├── ml_exploratory_analysis/
+│   │   ├── models/              # Trained CatBoost models (.cbm)
+│   │   └── results/             # Metrics and model comparison
 │   ├── scripts/                 # Run scripts
 │   ├── statistical_analysis/    # Statistics and charts
 │   └── requirements.txt

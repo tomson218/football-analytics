@@ -1,0 +1,4 @@
+﻿Model,Features,Feature List,CV AUC,CV AUC Std,Val AUC,Val Accuracy,Val Precision,Val Recall,Val LogLoss,Test AUC,Test Accuracy,Test F1,Test LogLoss,Training Time (s)
+Base (25 features),25,"C_LTA, HomeElo, AwayElo, Form3Home, Form5Home, Form3Away, Form5Away, OddDraw, OddAway, OddHome, MaxHome, MaxDraw, MaxAway, Over25, Under25, MaxOver25, MaxUnder25, HandiSize, HandiHome, HandiAway, C_LTH, C_VHD, C_VAD, C_PHB, C_HTB",0.7402,0.0186,0.7387,0.7262,0.7588,0.8797,0.5451,0.7163,0.7149,0.8066,0.5659,3.07
+10-Feature (top 10),10,"OddHome, MaxAway, MaxHome, OddAway, OddDraw, MaxDraw, HandiSize, HandiHome, C_HTB, C_LTA",0.7394,0.0196,0.7467,0.7320,0.7636,0.8814,0.5376,0.7158,0.7092,0.8019,0.5686,0.41
+6-Feature (top 6),6,"OddHome, OddAway, MaxAway, HandiSize, MaxHome, MaxDraw",0.7414,0.0194,0.7509,0.7285,0.7602,0.8814,0.5353,0.7158,0.7115,0.8038,0.5645,0.38
