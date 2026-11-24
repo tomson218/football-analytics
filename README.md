@@ -17,6 +17,16 @@ Charts generated from the data in the warehouse (8,621 matches from the 2020/21�
 |---|---|
 | ![Elo rating distribution by league](docs/images/elo_by_league.png) | ![Regression: shots on target vs goals](docs/images/shots_vs_goals.png) |
 
+### Prediction app
+
+The web app sends bookmaker odds and the Asian Handicap to the API, which returns the 6-feature model's probability that the home team does not lose. It compares that with the probability implied by the home odds and flags a value bet when the model's is higher.
+
+| Before: the form opens with each field at its minimum allowed value | After: odds entered (home 1.85, away 4.20, handicap −0.5) and prediction returned |
+|---|---|
+| ![Prediction form before entering odds](docs/images/frontend_form_empty.png) | ![Prediction form with entered odds and the result](docs/images/frontend_form_result.png) |
+
+The API is documented in [docs/API.md](docs/API.md), covering its endpoints, request and response fields, and Python functions. With the API running, interactive Swagger docs are at `http://localhost:8080/docs`; a standalone copy is in [docs/api/index.html](docs/api/index.html).
+
 ## Dataset
 
 The project uses the **[Club Football Match Data (2000–2025)](https://www.kaggle.com/datasets/adamgbor/club-football-match-data-2000-2025)** dataset by Adam Gábor (MIT license). The warehouse holds matches from the I1 (Serie A), SP1 (La Liga), D1 (Bundesliga), F1 (Ligue 1) and N1 (Eredivisie) leagues played between 1 August 2020 and 30 June 2025.
@@ -62,6 +72,22 @@ Three CatBoost classifiers predict **HomeNoLose**: whether the home team does no
 - **Outputs**: models are saved in `backend/ml_exploratory_analysis/models/`. Metrics, best hyperparameters and feature importance charts go to `backend/ml_exploratory_analysis/results/`.
 
 The feature lists are defined in `backend/common/constants.py` (`FEATURE_COLS_BASE`, `FEATURE_COLS_10`, `FEATURE_COLS_6`).
+
+### Training curves
+
+![CatBoost training curves: log loss and validation AUC per iteration for the 6-feature and base models](docs/images/training_curves.png)
+
+- **6-feature model**: train and validation log loss stay together, so the model does not overfit. Validation AUC peaks at 0.755 around iteration 19 and settles at 0.751 after 100 iterations.
+- **Base model**: after about 50 iterations, train log loss keeps falling while validation log loss stops improving, and from about iteration 170 it rises. The model is memorising the training data. Validation AUC holds around 0.75 until iteration 150, then drops to 0.739 by iteration 300. Fewer iterations or early stopping would likely help it.
+
+The curves come from CatBoost's training logs in `catboost_info/`. CatBoost writes this folder in the directory the training was started from, and each run overwrites it:
+
+| Folder | Model |
+|---|---|
+| `backend/catboost_info/` | 6-feature model |
+| `backend/ml_exploratory_analysis/catboost_info/` | Base model |
+
+There is no log for the 10-feature model, because a later run overwrote it. Each folder holds per-iteration metrics (`learn_error.tsv`, `test_error.tsv`), the run's settings (`catboost_training.json`) and TensorBoard event files. To redraw the chart after retraining, run `python ml_exploratory_analysis/plot_training_curves.py` from `backend`.
 
 ## Requirements
 

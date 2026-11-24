@@ -14,6 +14,12 @@ build/
 venv/
 env/
 
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
 # Environment variables
 .env
 .env.*
@@ -40,3 +46,7 @@ backend/csv/raw/*.csv
 *.png
 *.pdf
 !docs/images/*.png
+
+# CatBoost training logs are kept (see docs/images/training_curves.png); skip its scratch files
+!catboost_info/
+**/catboost_info/tmp/
